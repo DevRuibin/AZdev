@@ -1,0 +1,139 @@
+type Query {
+    taskMainList: [Task!]
+    search(term: String!): [SearchResultItem!]
+    taskInfo(id: ID!): Task
+    me: User
+    currentTime: String!
+}
+
+type Mutation {
+    userCreate(
+        input: UserInput!
+    ): UserPayload!
+    userLogin(
+        input: AuthInput!
+    ): UserPayload!
+    userDelete: UserDeletePayload!
+    taskCreate(
+        input: TaskInput!
+    ): TaskPayload!
+    approachCreate(
+        taskId: ID!
+        input: ApproachInput!
+    ): ApproachPayload!
+    approachVote(
+        approachId: ID!
+        input: ApproachVoteInput!
+    ): ApproachPayload!
+}
+
+type Subscription {
+    voteChanged(taskId: ID!): Approach!
+    taskMainListChanged: [Task!]
+}
+
+type User {
+    id: ID!
+    createdAt: String!
+    username: String!
+    name: String
+    taskList: [Task!]!
+
+}
+
+type Task implements SearchResultItem{
+    id: ID!
+    createdAt: String!
+    content: String!
+    approachCount: Int!
+    author: User!
+    approachList: [Approach!]!
+    tags: [String!]!
+}
+
+type Approach implements SearchResultItem{
+    id: ID!
+    createdAt: String!
+    content: String!
+    task: Task!
+    voteCount: Int!
+    author: User!
+    detailList: [ApproachDetail!]!
+}
+
+type ApproachDetail {
+    content: String!
+    category: ApproachDetailCategory!
+}
+
+interface SearchResultItem {
+    id: ID!
+    content: String!
+}
+
+enum ApproachDetailCategory {
+    NOTE
+    EXPLANATION
+    WARNING
+}
+
+type UserError {
+    message: String!
+}
+
+type UserPayload {
+    errors: [UserError!]!
+    user: User
+    authToken: String
+}
+
+input UserInput {
+    username: String!
+    password: String!
+    firstName: String
+    lastName: String
+}
+
+input AuthInput {
+    username: String!
+    password: String!
+}
+
+
+type UserDeletePayload {
+    errors: [UserError!]!
+    deletedUserId: ID
+}
+
+input TaskInput {
+    content: String!
+    tags: [String!]!
+    isPrivate: Boolean!
+}
+
+type TaskPayload {
+    errors: [UserError!]!
+    task: Task
+}
+
+input ApproachDetailInput {
+    content: String!
+    category: ApproachDetailCategory!
+}
+
+input ApproachInput {
+    content: String!
+    detailList: [ApproachDetailInput!]!
+}
+
+input ApproachVoteInput{
+    up: Boolean!
+}
+
+type ApproachPayload {
+    errors: [UserError!]!
+    approach: Approach
+}
+
+
+
