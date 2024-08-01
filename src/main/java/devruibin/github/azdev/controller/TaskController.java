@@ -12,6 +12,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -37,5 +38,10 @@ public class TaskController {
     @SchemaMapping(typeName = "Task", field = "approachList")
     public Iterable<Approach> getApproachList(Task task) {
         return approachService.findAllByTaskId(task.getId());
+    }
+
+    @SchemaMapping(typeName = "Task", field = "tags")
+    public List<String> getTags(Task task) {
+        return Arrays.stream(task.getTags().split(",")).toList();
     }
 }

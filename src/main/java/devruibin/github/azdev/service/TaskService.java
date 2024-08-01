@@ -17,4 +17,8 @@ public class TaskService {
     public List<Task> findTop100ByIsPrivateOrderByCreatedAtDesc() {
         return taskRepository.findTop100ByIsPrivateOrderByCreatedAtDesc(false).orElse(null);
     }
+
+    public Task getTask(Long id) {
+        return taskRepository.findById(id).orElse(null);
+    }
 }
