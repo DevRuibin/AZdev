@@ -1,5 +1,6 @@
 package devruibin.github.azdev.data;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.relational.core.mapping.Column;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class Detail {
     @Id
     private String id;
-    @Column("pgId")
+    @Column(name = "pgId")
     @NotNull
     private Long pgId;
 
