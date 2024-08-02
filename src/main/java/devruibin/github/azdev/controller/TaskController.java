@@ -8,6 +8,7 @@ import devruibin.github.azdev.service.ApproachService;
 import devruibin.github.azdev.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,11 @@ public class TaskController {
         List<Task> tasks =  taskService.findTop100ByIsPrivateOrderByCreatedAtDesc();
         log.info("taskMainList: {}", tasks);
         return tasks;
+    }
+
+    @QueryMapping
+    public Task taskInfo(@Argument("id") Long id){
+        return taskService.getTask(id);
     }
 
     @SchemaMapping(typeName = "Task", field = "author")
