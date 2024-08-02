@@ -1,4 +1,4 @@
-package devruibin.github.azdev.security;
+package devruibin.github.azdev.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

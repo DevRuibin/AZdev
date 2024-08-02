@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -39,5 +40,12 @@ public class UserService {
 
     private UUID generateUUID() {
         return UUID.randomUUID();
+    }
+
+    public Optional<User> getUserByToken(String token){
+        if(token == null) {
+            return Optional.empty();
+        }
+        return userRepository.getUserByAuthToken(token);
     }
 }

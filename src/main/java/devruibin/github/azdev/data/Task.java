@@ -1,5 +1,6 @@
 package devruibin.github.azdev.data;
 
+import devruibin.github.azdev.controller.dto.SearchResultItemDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tasks")
-public class Task {
+public class Task implements SearchResultItemDTO {
     @Id
     private Long id;
     @NotNull

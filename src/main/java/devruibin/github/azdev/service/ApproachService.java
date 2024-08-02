@@ -5,6 +5,9 @@ import devruibin.github.azdev.repository.ApproachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ApproachService {
@@ -12,5 +15,9 @@ public class ApproachService {
 
     public Iterable<Approach> findAllByTaskId(Long taskId) {
         return approachRepository.findAllByTaskIdOrderByVoteCountDescCreatedAtDesc(taskId);
+    }
+
+    public List<Approach> findByTerm(String term, Long userId) {
+        return approachRepository.findByTerm(term, userId).orElseGet(List::of);
     }
 }

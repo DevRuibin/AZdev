@@ -24,7 +24,7 @@ public class User implements Persistable<Long> {
     @Id
     private Long id;
     @NotNull
-    @Size(min=5, max = 30, message="Name must be at least 5 characters long, and no more than 30 characters")
+    @Size(min=4, max = 30, message="Name must be at least 5 characters long, and no more than 30 characters")
     private String username;
     @NotNull
     @Column(name = "hashed_password")
