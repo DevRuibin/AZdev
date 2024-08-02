@@ -1,12 +1,11 @@
 package devruibin.github.azdev.data;
 
 import devruibin.github.azdev.controller.dto.SearchResultItemDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Persistable;
 
 import java.time.Instant;
 
@@ -17,8 +16,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tasks")
-public class Task implements SearchResultItemDTO {
+@Slf4j
+public class Task implements SearchResultItemDTO, Persistable<Long> {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
     @Column(name = "content")
@@ -39,4 +40,10 @@ public class Task implements SearchResultItemDTO {
     @Column(name = "created_at")
     @Builder.Default
     private Instant createdAt = Instant.now();
+
+    @Override
+    public boolean isNew() {
+        log.info("isNew: {}", this.getId() == null);
+        return this.getId() == null;
+    }
 }

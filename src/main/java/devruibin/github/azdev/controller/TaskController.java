@@ -1,5 +1,8 @@
 package devruibin.github.azdev.controller;
 
+import devruibin.github.azdev.controller.dto.TaskInputDTO;
+import devruibin.github.azdev.controller.dto.TaskPayloadDTO;
+import devruibin.github.azdev.controller.dto.UserErrorDTO;
 import devruibin.github.azdev.data.Approach;
 import devruibin.github.azdev.data.Task;
 import devruibin.github.azdev.data.User;
@@ -11,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
@@ -55,5 +59,14 @@ public class TaskController {
     @SchemaMapping(typeName = "Task", field = "tags")
     public List<String> getTags(Task task) {
         return Arrays.stream(task.getTags().split(",")).toList();
+    }
+
+    @MutationMapping
+    public TaskPayloadDTO taskCreate(@Argument TaskInputDTO input){
+        Optional<User> userOptional = userService.getUserByToken(request.getHeader("Authorization"));
+        return userOptional.map(u -> taskService.taskCreate(input, u))
+                .orElseGet(() -> TaskPayloadDTO.builder()
+                        .errors(List.of(new UserErrorDTO("User not found")))
+                        .task(null).build());
     }
 }
