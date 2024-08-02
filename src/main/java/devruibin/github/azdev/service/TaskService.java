@@ -29,6 +29,10 @@ public class TaskService {
         return taskRepository.findByIdAndUserId(id, userId).orElse(null);
     }
 
+    public List<Task> findAllByUserId(Long userId) {
+        return taskRepository.findAllByUserId(userId).orElseGet(List::of);
+    }
+
     public List<Task> findAllByTerm(String term, Long userId) {
         return taskRepository.findAllByTerm(term, userId).orElseGet(List::of);
     }
@@ -42,7 +46,7 @@ public class TaskService {
         Task task = Task.builder()
                 .content(input.content())
                 .tags( String.join(",", input.tags()))
-                .UserId(u.getId())
+                .userId(u.getId())
                 .isPrivate(input.isPrivate())
                 .build();
         log.info("Task created: {}", task);

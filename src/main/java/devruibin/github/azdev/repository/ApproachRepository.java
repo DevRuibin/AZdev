@@ -13,7 +13,7 @@ public interface ApproachRepository extends JpaRepository<Approach, Long> {
 
     @Query(value = """
     SELECT a FROM approaches a, tasks t
-    WHERE t.id = a.taskId and  (t.UserId = :userId or t.isPrivate = false)
+    WHERE t.id = a.taskId and  (t.userId = :userId or t.isPrivate = false)
        and a.content LIKE %:term%
     """)
     Optional<List<Approach>> findByTerm(@Param("term") String term, @Param("userId") Long userId);

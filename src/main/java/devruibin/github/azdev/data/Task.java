@@ -28,7 +28,7 @@ public class Task implements SearchResultItemDTO, Persistable<Long> {
     private String tags;
     @NotNull
     @Column(name = "user_id")
-    private Long UserId;
+    private Long userId;
     @NotNull
     @Column(name = "is_private")
     @Builder.Default

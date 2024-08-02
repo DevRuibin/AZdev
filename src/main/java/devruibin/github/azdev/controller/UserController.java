@@ -4,8 +4,10 @@ import devruibin.github.azdev.controller.dto.UserDeletePayloadDTO;
 import devruibin.github.azdev.controller.dto.UserErrorDTO;
 import devruibin.github.azdev.controller.dto.UserInputDTO;
 import devruibin.github.azdev.controller.dto.UserPayloadDTO;
+import devruibin.github.azdev.data.Task;
 import devruibin.github.azdev.data.User;
 import devruibin.github.azdev.repository.UserRepository;
+import devruibin.github.azdev.service.TaskService;
 import devruibin.github.azdev.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final HttpServletRequest request;
+    private final TaskService taskService;
 
     @SchemaMapping(typeName = "User", field = "name")
     public String getUserName(User user) {
@@ -64,6 +67,11 @@ public class UserController {
     public User me() {
         String token = request.getHeader("Authorization");
         return userService.getUserByToken(token).orElse(null);
+    }
+
+    @SchemaMapping(typeName = "User", field = "taskList")
+    public List<Task> getTaskList(User user) {
+        return taskService.findAllByUserId(user.getId());
     }
 
     @MutationMapping("userDelete")
