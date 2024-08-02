@@ -6,9 +6,11 @@ import devruibin.github.azdev.controller.dto.UserPayloadDTO;
 import devruibin.github.azdev.data.User;
 import devruibin.github.azdev.repository.UserRepository;
 import devruibin.github.azdev.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ public class UserController {
     private  final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
+    private final HttpServletRequest request;
 
     @SchemaMapping(typeName = "User", field = "name")
     public String getUserName(User user) {
@@ -50,5 +53,12 @@ public class UserController {
         }
         user = userService.updateToken(user);
         return new UserPayloadDTO(null, user, user.getAuthToken());
+    }
+
+    @QueryMapping
+    public User me() {
+        String token = request.getHeader("Authorization");
+        return userService.getUserByToken(token).orElse(null);
+
     }
 }
