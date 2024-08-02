@@ -6,6 +6,8 @@ import devruibin.github.azdev.data.User;
 import devruibin.github.azdev.repository.UserRepository;
 import devruibin.github.azdev.service.ApproachService;
 import devruibin.github.azdev.service.TaskService;
+import devruibin.github.azdev.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +26,8 @@ public class TaskController {
     private final TaskService taskService;
     private final UserRepository userRepository;
     private final ApproachService approachService;
+    private final UserService userService;
+    private final HttpServletRequest request;
 
     @QueryMapping
     public List<Task> taskMainList(){
@@ -33,7 +38,8 @@ public class TaskController {
 
     @QueryMapping
     public Task taskInfo(@Argument("id") Long id){
-        return taskService.getTask(id);
+        Optional<User> user = userService.getUserByToken(request.getHeader("Authorization"));
+        return taskService.getTaskWithUserId(id, user.orElseGet(User::new).getId());
     }
 
     @SchemaMapping(typeName = "Task", field = "author")

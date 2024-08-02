@@ -22,6 +22,10 @@ public class TaskService {
         return taskRepository.findById(id).orElse(null);
     }
 
+    public Task getTaskWithUserId(Long id, Long userId) {
+        return taskRepository.findByIdAndUserId(id, userId).orElse(null);
+    }
+
     public List<Task> findAllByTerm(String term, Long userId) {
         return taskRepository.findAllByTerm(term, userId).orElseGet(List::of);
     }

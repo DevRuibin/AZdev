@@ -16,4 +16,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM tasks t" +
             " WHERE (t.isPrivate = false or t.UserId = :userId) and (t.content LIKE %:term% OR t.tags LIKE %:term%)")
     Optional<List<Task>> findAllByTerm(@Param("term") String term, @Param("userId") Long userId);
+
+
+    @Query("SELECT t FROM tasks t" +
+            " WHERE (t.isPrivate = false or t.UserId = :userId) and t.id = :id")
+    Optional<Task> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 }
