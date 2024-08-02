@@ -42,6 +42,6 @@ public class User implements Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        return true;
+        return this.getId() == null;
     }
 }

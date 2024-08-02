@@ -48,4 +48,15 @@ public class UserService {
         }
         return userRepository.getUserByAuthToken(token);
     }
+
+    public Long deleteUser(Long id) {
+        try {
+            userRepository.deleteById(id);
+            log.info("User with id {} deleted", id);
+        } catch (Exception e) {
+            log.error("Error deleting user with id {}: {}", id, e.getMessage(), e);
+            throw e;
+        }
+        return id;
+    }
 }

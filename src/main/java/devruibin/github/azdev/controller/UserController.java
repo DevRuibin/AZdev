@@ -1,5 +1,6 @@
 package devruibin.github.azdev.controller;
 
+import devruibin.github.azdev.controller.dto.UserDeletePayloadDTO;
 import devruibin.github.azdev.controller.dto.UserErrorDTO;
 import devruibin.github.azdev.controller.dto.UserInputDTO;
 import devruibin.github.azdev.controller.dto.UserPayloadDTO;
@@ -8,6 +9,9 @@ import devruibin.github.azdev.repository.UserRepository;
 import devruibin.github.azdev.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -19,6 +23,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private  final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -59,6 +64,18 @@ public class UserController {
     public User me() {
         String token = request.getHeader("Authorization");
         return userService.getUserByToken(token).orElse(null);
+    }
 
+    @MutationMapping("userDelete")
+    public UserDeletePayloadDTO userDelete() {
+        String token = request.getHeader("Authorization");
+        User user = userService.getUserByToken(token).orElse(null);
+        if(user == null) {
+            return new UserDeletePayloadDTO(List.of(new UserErrorDTO("User not found")), null);
+        }
+        log.info("Deleting user: {}", user);
+        userService.deleteUser(user.getId());
+        log.info("User deleted: {}", user);
+        return new UserDeletePayloadDTO(null, user.getId());
     }
 }
