@@ -66,12 +66,13 @@ public class ApproachService {
         int voteCount = approach.getVoteCount();
         if(up){
             voteCount++;
+            approach.setVoteCount(voteCount);
             publishVoteChange(approach);
         }else{
             // todo: enable down vote
             return new ApproachPayloadDTO(List.of(new UserErrorDTO("Down vote is not supported yet")), null);
         }
-        approach.setVoteCount(voteCount);
+
         approachRepository.save(approach);
         return new ApproachPayloadDTO(null, approach);
     }
