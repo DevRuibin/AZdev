@@ -1,12 +1,13 @@
 package devruibin.github.azdev.service;
 
-import devruibin.github.azdev.controller.dto.ApproachDetailInputDTO;
-import devruibin.github.azdev.controller.dto.ApproachInputDTO;
-import devruibin.github.azdev.controller.dto.ApproachPayloadDTO;
+import devruibin.github.azdev.controller.dto.*;
 import devruibin.github.azdev.data.Approach;
+import devruibin.github.azdev.data.User;
 import devruibin.github.azdev.repository.ApproachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,16 @@ import java.util.List;
 public class ApproachService {
     private final ApproachRepository approachRepository;
     private final DetailService detailService;
+    private final Sinks.Many<Approach> voteSink = Sinks.many().multicast().onBackpressureBuffer();
+
+
+    public  Flux<Approach> getVoteChanges(Long taskId) {
+        return voteSink.asFlux().filter(approach -> approach.getTaskId().equals(taskId));
+    }
+
+    private void publishVoteChange(Approach approach) {
+        voteSink.tryEmitNext(approach);
+    }
 
     public Iterable<Approach> findAllByTaskId(Long taskId) {
         return approachRepository.findAllByTaskIdOrderByVoteCountDescCreatedAtDesc(taskId);
@@ -41,5 +52,27 @@ public class ApproachService {
         });
 
     return new ApproachPayloadDTO(null, savedApproach);
+    }
+
+    public ApproachPayloadDTO approachVote(Long approachId, ApproachVoteInputDTO input, Long userId) {
+        Approach approach = approachRepository.findById(approachId).orElse(null);
+        if(approach == null){
+            return new ApproachPayloadDTO(List.of(new UserErrorDTO("Approach not found")), null);
+        }
+        if(approach.getUserId().equals(userId)){
+            return new ApproachPayloadDTO(List.of(new UserErrorDTO("You can't vote for your own approach")), null);
+        }
+        boolean up = input.up();
+        int voteCount = approach.getVoteCount();
+        if(up){
+            voteCount++;
+            publishVoteChange(approach);
+        }else{
+            // todo: enable down vote
+            return new ApproachPayloadDTO(List.of(new UserErrorDTO("Down vote is not supported yet")), null);
+        }
+        approach.setVoteCount(voteCount);
+        approachRepository.save(approach);
+        return new ApproachPayloadDTO(null, approach);
     }
 }
