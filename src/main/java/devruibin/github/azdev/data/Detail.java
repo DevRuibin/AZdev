@@ -18,7 +18,7 @@ import java.util.List;
 public class Detail {
     @Id
     private String id;
-    @Column(name = "pgId")
+    @Field(name = "pgId")
     @NotNull
     private Long pgId;
 
