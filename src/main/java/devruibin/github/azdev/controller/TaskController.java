@@ -13,11 +13,9 @@ import devruibin.github.azdev.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.MutationMapping;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,5 +66,12 @@ public class TaskController {
                 .orElseGet(() -> TaskPayloadDTO.builder()
                         .errors(List.of(new UserErrorDTO("User not found")))
                         .task(null).build());
+    }
+
+    @SubscriptionMapping
+    public Flux<List<Task>> taskMainListChanged(){
+        return taskService.getTaskChange();
+
+//        return tasks;
     }
 }

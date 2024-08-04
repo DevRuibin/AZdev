@@ -13,6 +13,10 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Optional<List<Task>> findTop100ByIsPrivateOrderByCreatedAtDesc(boolean isPrivate);
 
+//    @Query("SELECT t FROM tasks t" +
+//            " WHERE (t.isPrivate = false or t.userId = :userId) order by t.createdAt desc limit 100")
+//    Optional<List<Task>> findTop100ByIsPrivateOrderByCreatedAtDesc(boolean isPrivate, Long userId);
+
     @Query("SELECT t FROM tasks t" +
             " WHERE (t.isPrivate = false or t.userId = :userId) and (t.content LIKE %:term% OR t.tags LIKE %:term%)")
     Optional<List<Task>> findAllByTerm(@Param("term") String term, @Param("userId") Long userId);

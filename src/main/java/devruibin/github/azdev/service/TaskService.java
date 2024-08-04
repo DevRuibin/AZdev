@@ -8,6 +8,8 @@ import devruibin.github.azdev.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
 @Slf4j
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final Sinks.Many<List<Task>> tasksSink = Sinks.many().multicast().onBackpressureBuffer();
+
 
     public List<Task> findTop100ByIsPrivateOrderByCreatedAtDesc() {
         return taskRepository.findTop100ByIsPrivateOrderByCreatedAtDesc(false).orElse(null);
@@ -51,10 +55,24 @@ public class TaskService {
                 .build();
         log.info("Task created: {}", task);
         saveTask(task);
+        publishMainTaskChange(findTop100ByIsPrivateOrderByCreatedAtDesc());
         return TaskPayloadDTO.builder()
                 .errors(null)
                 .task(task)
                 .build();
 
+    }
+
+
+    public Flux<List<Task>> getTaskChange () {
+        log.info("getTaskChange");
+        Flux<List<Task>> flux = tasksSink.asFlux();
+        log.info("getTaskChange: {}", flux);
+        return flux;
+    }
+
+    private void publishMainTaskChange(List<Task> tasks) {
+        log.info("publishMainTaskChange: {}", tasks);
+        tasksSink.tryEmitNext(tasks);
     }
 }
