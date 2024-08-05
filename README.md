@@ -33,7 +33,7 @@ AZdev is a Java-based implementation of the concepts presented in the book *Grap
     - Create a database for the project.
     - Update the database configuration in `application.properties`.
     
-   > **Note:** Hopefully, the author of the book provides two containers for testing purposes. you can find the docker
+   > **Note:** Thankfully, the author of the book provides two containers for testing purposes. you can find the docker
    > compose file in the `resources` folder.
 
 3. **Build the project:**
